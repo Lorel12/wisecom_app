@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
-import { authenticate, requireRole } from "../middleware/auth.js";
+import { authenticate, optionalAuthenticate, requireRole } from "../middleware/auth.js";
 
 export const productsRouter = Router();
 
@@ -13,17 +13,20 @@ const listQuerySchema = z.object({
   maxPrice: z.coerce.number().optional(),
   sort: z.enum(["recent", "price_asc", "price_desc"]).optional(),
   featured: z.coerce.boolean().optional(),
+  includeInactive: z.coerce.boolean().optional(),
   page: z.coerce.number().min(1).default(1),
-  perPage: z.coerce.number().min(1).max(60).default(24),
+  perPage: z.coerce.number().min(1).max(100).default(24),
 });
 
-productsRouter.get("/", async (req, res) => {
+productsRouter.get("/", optionalAuthenticate, async (req, res) => {
   const parsed = listQuerySchema.safeParse(req.query);
   if (!parsed.success) return res.status(400).json({ error: "Paramètres invalides." });
-  const { category, search, condition, minPrice, maxPrice, sort, featured, page, perPage } = parsed.data;
+  const { category, search, condition, minPrice, maxPrice, sort, featured, includeInactive, page, perPage } = parsed.data;
+
+  const isStaff = req.user?.role === "ADMIN" || req.user?.role === "SUPERADMIN";
 
   const where = {
-    isActive: true,
+    ...(includeInactive && isStaff ? {} : { isActive: true }),
     ...(category ? { category: { slug: category } } : {}),
     ...(condition ? { condition } : {}),
     ...(featured !== undefined ? { isFeatured: featured } : {}),
@@ -62,12 +65,13 @@ productsRouter.get("/", async (req, res) => {
   res.json({ items, total, page, perPage, totalPages: Math.ceil(total / perPage) });
 });
 
-productsRouter.get("/:slug", async (req, res) => {
-  const product = await prisma.product.findUnique({
-    where: { slug: req.params.slug },
+productsRouter.get("/:slug", optionalAuthenticate, async (req, res) => {
+  const isStaff = req.user?.role === "ADMIN" || req.user?.role === "SUPERADMIN";
+  const product = await prisma.product.findFirst({
+    where: { OR: [{ slug: req.params.slug }, { id: req.params.slug }] },
     include: { category: true, reviews: { include: { user: true }, orderBy: { createdAt: "desc" } } },
   });
-  if (!product || !product.isActive) return res.status(404).json({ error: "Produit introuvable." });
+  if (!product || (!product.isActive && !isStaff)) return res.status(404).json({ error: "Produit introuvable." });
   res.json({ product });
 });
 

@@ -87,8 +87,13 @@ paymentsRouter.post("/webhook/:provider", async (req, res) => {
   const payment = await prisma.payment.findUnique({ where: { transactionRef } });
   if (!payment) return res.status(404).json({ error: "Paiement introuvable." });
 
-  const client = clientFor(provider);
-  const result = await client.verify(transactionRef);
+  // En mode simulation (pas d'identifiants marchand configurés), le body du webhook
+  // peut porter un indicateur explicite "success" pour piloter le scénario testé.
+  const simulatedOverride = typeof req.body?.success === "boolean" ? (req.body.success as boolean) : undefined;
+  const result =
+    simulatedOverride !== undefined
+      ? { status: (simulatedOverride ? "SUCCESS" : "FAILED") as "SUCCESS" | "FAILED", raw: req.body }
+      : await clientFor(provider).verify(transactionRef);
 
   await prisma.$transaction([
     prisma.payment.update({ where: { id: payment.id }, data: { status: result.status, providerRaw: req.body } }),

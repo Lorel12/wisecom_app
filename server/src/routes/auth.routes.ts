@@ -41,7 +41,7 @@ authRouter.post("/register", async (req, res) => {
     data: { firstName, lastName, email, phone, passwordHash },
   });
 
-  const token = signToken({ sub: user.id, role: user.role });
+  const token = signToken({ sub: user.id, role: user.role as JwtPayload["role"] });
   res.cookie(env.cookieName, token, cookieOptions);
   res.status(201).json({ user: toPublicUser(user) });
 });
