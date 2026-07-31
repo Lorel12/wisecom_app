@@ -97,7 +97,7 @@ export default function RegisterPage() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {t("hasAccount")}{" "}
-            <Link href="/connexion" className="font-medium text-primary hover:underline">
+            <Link href="/connexion" className=" font-medium text-primary hover:underline">
               {t("loginTitle")}
             </Link>
           </p>

@@ -72,7 +72,7 @@ function LoginForm() {
 
             {serverError && <p className="text-sm text-destructive">{serverError}</p>}
 
-            <Button type="submit" size="lg" loading={isSubmitting} className="mt-2">
+            <Button type="submit" size="lg" loading={isSubmitting} className="mt-2 cursor-pointer">
               {t("submitLogin")}
             </Button>
           </form>
@@ -81,6 +81,12 @@ function LoginForm() {
             {t("noAccount")}{" "}
             <Link href="/inscription" className="font-medium text-primary hover:underline">
               {t("registerTitle")}
+            </Link>
+          </p>
+
+          <p className="mt-3 text-center text-sm">
+            <Link href="/mot-de-passe-oublie" className="font-medium text-destructive hover:underline">
+              {t("forgotPassword")}
             </Link>
           </p>
         </CardContent>

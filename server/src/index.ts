@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -11,12 +12,17 @@ import { adminRouter } from "./routes/admin.routes.js";
 import { reviewsRouter } from "./routes/reviews.routes.js";
 import { wishlistRouter } from "./routes/wishlist.routes.js";
 import { addressesRouter } from "./routes/addresses.routes.js";
+import { uploadsRouter, uploadsDir } from "./routes/uploads.routes.js";
+import { contactRouter } from "./routes/contact.routes.js";
+
+fs.mkdirSync(uploadsDir, { recursive: true });
 
 const app = express();
 
 app.use(cors({ origin: env.clientOrigin, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use("/uploads", express.static(uploadsDir));
 
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
@@ -29,6 +35,8 @@ app.use("/api/admin", adminRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/addresses", addressesRouter);
+app.use("/api/uploads", uploadsRouter);
+app.use("/api/contact", contactRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: `Route inconnue : ${req.method} ${req.path}` });

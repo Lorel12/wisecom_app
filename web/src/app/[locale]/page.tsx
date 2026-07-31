@@ -30,6 +30,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
 
 export default async function HomePage() {
   const t = await getTranslations("home");
+  const tc = await getTranslations("common");
   const [categories, featured] = await Promise.all([getCategories(), getFeaturedProducts()]);
 
   return (
@@ -38,7 +39,7 @@ export default async function HomePage() {
         <Container className="grid grid-cols-1 items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
           <div className="flex flex-col gap-6">
             <span className="inline-flex w-fit items-center rounded-full bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary">
-              Cité des Nations · Yaoundé
+              Douala · Yaoundé
             </span>
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               {t("heroTitle")}
@@ -54,7 +55,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="relative mx-auto aspect-square w-full max-w-md rounded-3xl bg-gradient-to-br from-primary-500 to-primary-800 shadow-elevated">
-            <div className="absolute inset-6 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-sm" />
+            <div className="absolute inset-6 rounded-2xl border border-white/15 bg-black/5 backdrop-blur-sm" />
           </div>
         </Container>
       </section>
@@ -89,7 +90,7 @@ export default async function HomePage() {
                 <p className="mt-1 text-sm text-muted-foreground">{t("featuredSubtitle")}</p>
               </div>
               <Link href="/produits" className="hidden text-sm font-medium text-primary hover:underline sm:inline">
-                Voir tout
+                {tc("seeAll")}
               </Link>
             </div>
             <ProductGrid products={featured} />

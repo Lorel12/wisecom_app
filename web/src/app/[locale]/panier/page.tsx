@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useCartStore } from "@/store/cart";
 import { useAuthStore } from "@/store/auth";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, resolveImageUrl } from "@/lib/utils";
 
 const SHIPPING_FEE = 1000;
 
@@ -43,7 +43,7 @@ export default function CartPage() {
               <li key={line.product.id} className="flex gap-4 rounded-xl border border-border bg-card p-4 shadow-soft">
                 <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-secondary">
                   {line.product.images[0] ? (
-                    <Image src={line.product.images[0]} alt={line.product.name} fill className="object-cover" />
+                    <Image src={resolveImageUrl(line.product.images[0])} alt={line.product.name} fill className="object-cover" unoptimized />
                   ) : (
                     <div className="flex size-full items-center justify-center text-muted-foreground">
                       <ShoppingBag className="size-6" />
@@ -105,7 +105,7 @@ export default function CartPage() {
               </div>
             </div>
             <Button
-              className="mt-6 w-full"
+              className="mt-6 w-full cursor-pointer"
               size="lg"
               onClick={() => router.push(user ? "/checkout" : "/connexion?next=/checkout")}
             >

@@ -58,7 +58,7 @@ paymentsRouter.get("/:orderId/status", authenticate, async (req, res) => {
   if (!payment) return res.status(404).json({ error: "Paiement introuvable." });
 
   if (payment.status === "PENDING" && payment.transactionRef) {
-    const client = clientFor(payment.provider);
+    const client = clientFor(payment.provider as "ORANGE_MONEY" | "MTN_MOMO");
     const result = await client.verify(payment.transactionRef);
     if (result.status !== "PENDING") {
       await prisma.$transaction([

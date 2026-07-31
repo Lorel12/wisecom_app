@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = process.env.SUPERADMIN_EMAIL ?? "admin@boutique-yde.cm";
+  const email = process.env.SUPERADMIN_EMAIL ?? "admin@wisecom.cm";
   const password = process.env.SUPERADMIN_PASSWORD ?? "ChangeMoiRapidement!123";
 
   const superadmin = await prisma.user.upsert({

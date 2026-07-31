@@ -1,10 +1,12 @@
+import { randomBytes, createHash } from "node:crypto";
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
-import { signToken } from "../lib/jwt.js";
+import { signToken, type JwtPayload } from "../lib/jwt.js";
 import { env } from "../lib/env.js";
 import { authenticate } from "../middleware/auth.js";
+import { sendPasswordResetEmail } from "../lib/email.js";
 
 export const authRouter = Router();
 
@@ -67,7 +69,7 @@ authRouter.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Identifiants incorrects." });
   }
 
-  const token = signToken({ sub: user.id, role: user.role });
+  const token = signToken({ sub: user.id, role: user.role as JwtPayload["role"] });
   res.cookie(env.cookieName, token, cookieOptions);
   res.json({ user: toPublicUser(user) });
 });
@@ -119,6 +121,61 @@ authRouter.post("/me/password", authenticate, async (req, res) => {
   }
   const passwordHash = await bcrypt.hash(parsed.data.newPassword, 10);
   await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+  res.status(204).send();
+});
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+  locale: z.enum(["fr", "en"]).default("fr"),
+});
+
+authRouter.post("/forgot-password", async (req, res) => {
+  const parsed = forgotPasswordSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Email invalide." });
+  const { email, locale } = parsed.data;
+
+  const genericResponse = { message: "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé." };
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return res.json(genericResponse);
+
+  const rawToken = randomBytes(32).toString("hex");
+  const resetTokenHash = createHash("sha256").update(rawToken).digest("hex");
+  const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+  await prisma.user.update({ where: { id: user.id }, data: { resetTokenHash, resetTokenExpiresAt } });
+
+  const resetUrl = `${env.clientOrigin}/${locale}/reinitialiser-mot-de-passe?token=${rawToken}`;
+  await sendPasswordResetEmail(user.email, resetUrl);
+
+  // En mode simulation (pas de SMTP configuré), on renvoie le lien directement pour pouvoir tester
+  // sans boîte mail réelle. À retirer si SMTP_HOST est configuré en production.
+  const isSimulated = !env.smtp.host;
+  res.json(isSimulated && process.env.NODE_ENV !== "production" ? { ...genericResponse, resetUrl } : genericResponse);
+});
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(10),
+  password: z.string().min(8),
+});
+
+authRouter.post("/reset-password", async (req, res) => {
+  const parsed = resetPasswordSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Données invalides." });
+  const { token, password } = parsed.data;
+
+  const resetTokenHash = createHash("sha256").update(token).digest("hex");
+  const user = await prisma.user.findFirst({
+    where: { resetTokenHash, resetTokenExpiresAt: { gt: new Date() } },
+  });
+  if (!user) return res.status(400).json({ error: "Lien invalide ou expiré." });
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordHash, resetTokenHash: null, resetTokenExpiresAt: null },
+  });
+
   res.status(204).send();
 });
 
