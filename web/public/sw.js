@@ -1,4 +1,4 @@
-const CACHE_NAME = "cite-market-v1";
+const CACHE_NAME = "wisecom-v1";
 const OFFLINE_URL = "/fr";
 
 self.addEventListener("install", (event) => {
