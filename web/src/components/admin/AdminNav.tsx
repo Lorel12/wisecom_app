@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LayoutDashboard, Package, ShoppingCart, Users } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Tags, Users } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth";
@@ -14,6 +14,7 @@ export function AdminNav() {
   const items = [
     { href: "/admin", label: t("dashboard"), icon: LayoutDashboard },
     { href: "/admin/produits", label: t("products"), icon: Package },
+    { href: "/admin/categories", label: t("categories"), icon: Tags },
     { href: "/admin/commandes", label: t("orders"), icon: ShoppingCart },
     ...(user?.role === "SUPERADMIN" ? [{ href: "/admin/utilisateurs", label: t("users"), icon: Users }] : []),
   ];
