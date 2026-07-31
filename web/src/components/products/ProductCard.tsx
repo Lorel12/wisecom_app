@@ -8,7 +8,7 @@ import type { Product } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { PriceTag } from "@/components/ui/PriceTag";
 import { useCartStore } from "@/store/cart";
-import { cn } from "@/lib/utils";
+import { cn, resolveImageUrl } from "@/lib/utils";
 import { toast } from "sonner";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -24,11 +24,12 @@ export function ProductCard({ product }: { product: Product }) {
       <Link href={`/produits/${product.slug}`} className="relative block aspect-square overflow-hidden bg-secondary">
         {product.images[0] ? (
           <Image
-            src={product.images[0]}
+            src={resolveImageUrl(product.images[0])}
             alt={name}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
+            unoptimized
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">

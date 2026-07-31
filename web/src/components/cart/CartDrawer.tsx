@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useCartStore } from "@/store/cart";
 import { buttonVariants } from "@/components/ui/Button";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, formatPrice, resolveImageUrl } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 export function CartDrawer() {
@@ -62,7 +62,7 @@ export function CartDrawer() {
                 <li key={line.product.id} className="flex gap-3">
                   <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-secondary">
                     {line.product.images[0] ? (
-                      <Image src={line.product.images[0]} alt={line.product.name} fill className="object-cover" />
+                      <Image src={resolveImageUrl(line.product.images[0])} alt={line.product.name} fill className="object-cover" unoptimized />
                     ) : (
                       <div className="flex size-full items-center justify-center text-muted-foreground">
                         <ShoppingBag className="size-6" />

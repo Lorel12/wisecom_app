@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
 import { Switch } from "@/components/ui/Switch";
 import { Button } from "@/components/ui/Button";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -27,7 +28,6 @@ const schema = z.object({
   quantity: z.number().int().min(0),
   condition: z.enum(["NEUF", "OCCASION"]),
   brand: z.string().optional(),
-  images: z.string().optional(),
   isActive: z.boolean(),
   isFeatured: z.boolean(),
   categoryId: z.string().min(1),
@@ -46,6 +46,7 @@ function slugify(value: string) {
 export function ProductForm({ product, categories }: { product?: Product; categories: Category[] }) {
   const t = useTranslations("admin");
   const router = useRouter();
+  const [images, setImages] = React.useState<string[]>(product?.images ?? []);
 
   const {
     register,
@@ -67,7 +68,6 @@ export function ProductForm({ product, categories }: { product?: Product; catego
           quantity: product.quantity,
           condition: product.condition,
           brand: product.brand ?? "",
-          images: product.images.join("\n"),
           isActive: product.isActive,
           isFeatured: product.isFeatured,
           categoryId: product.categoryId,
@@ -87,7 +87,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
       descriptionEn: values.descriptionEn || undefined,
       brand: values.brand || undefined,
       compareAtPrice: values.compareAtPrice && !Number.isNaN(values.compareAtPrice) ? values.compareAtPrice : undefined,
-      images: values.images ? values.images.split("\n").map((s) => s.trim()).filter(Boolean) : [],
+      images,
     };
 
     try {
@@ -166,8 +166,8 @@ export function ProductForm({ product, categories }: { product?: Product; catego
         </Field>
       </div>
 
-      <Field label={t("images")} htmlFor="images" hint="Une URL par ligne">
-        <Textarea id="images" rows={3} {...register("images")} placeholder="https://…" />
+      <Field label={t("images")} htmlFor="images">
+        <ImageUploader images={images} onChange={setImages} />
       </Field>
 
       <div className="flex gap-6">
