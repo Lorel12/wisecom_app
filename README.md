@@ -1,7 +1,8 @@
-# Cité Market — Boutique en ligne (Cité des Nations, Yaoundé)
+# WISECOM Global Trading and Supplies — Site e-commerce & vitrine
 
-Application e-commerce (web, prête pour PWA mobile) pour la vente d'ordinateurs, téléphones,
-ustensiles de cuisine, clés USB, chargeurs et autres articles neufs ou d'occasion.
+Application e-commerce (web, prête pour PWA mobile) pour WISECOM Global Trading and Supplies :
+vente d'ordinateurs, téléphones, accessoires et appareils électroménagers neufs ou d'occasion,
+import-export, services techniques, et motos & véhicules. Siège à Douala, agence à Yaoundé.
 
 ## Structure du projet
 
@@ -43,7 +44,7 @@ Identifiants du super-admin créés par le seed : voir `SUPERADMIN_EMAIL` / `SUP
 cd web
 cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL doit pointer vers l'API (http://localhost:4000)
 npm install
-npm run dev                          # démarre le site sur http://localhost:3000
+npm run dev                          # démarre le site sur http://localhost:3001
 ```
 
 ## Paiement mobile (Orange Money / MTN MoMo)
