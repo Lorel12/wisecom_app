@@ -14,7 +14,7 @@ export function CartButton() {
     <button
       onClick={open}
       aria-label="Panier"
-      className="relative flex size-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-secondary"
+      className="relative cursor-pointer flex size-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-secondary"
     >
       <ShoppingBag className="size-[18px]" />
       {count > 0 && (
