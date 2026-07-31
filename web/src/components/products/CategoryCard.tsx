@@ -1,20 +1,20 @@
 import { useLocale } from "next-intl";
-import { Cpu, Headphones, Laptop, Plug, Smartphone, Usb, type LucideIcon } from "lucide-react";
+import { Heater, Headphones, Laptop, Plug, Smartphone, HardDrive, type LucideIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Category } from "@/lib/types";
 
 const ICONS: Record<string, LucideIcon> = {
   laptop: Laptop,
   smartphone: Smartphone,
-  utensils: Cpu,
-  usb: Usb,
+  utensils: Heater,
+  usb: HardDrive,
   plug: Plug,
   headphones: Headphones,
 };
 
 export function CategoryCard({ category }: { category: Category }) {
   const locale = useLocale();
-  const Icon = ICONS[category.icon ?? ""] ?? Cpu;
+  const Icon = ICONS[category.icon ?? ""] ?? Heater;
   const name = locale === "en" && category.nameEn ? category.nameEn : category.name;
 
   return (
