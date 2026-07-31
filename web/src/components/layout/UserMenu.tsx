@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { useAuthStore } from "@/store/auth";
 import { Avatar } from "@/components/ui/Avatar";
+import { Badge } from "@/components/ui/Badge";
 import { buttonVariants } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import {
@@ -47,9 +48,13 @@ export function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <div className="px-3 py-2">
-          <p className="text-sm font-medium text-foreground">
-            {user.firstName} {user.lastName}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-medium text-foreground">
+              {user.firstName} {user.lastName}
+            </p>
+            {user.role === "SUPERADMIN" && <Badge variant="accent">Super-admin</Badge>}
+            {user.role === "ADMIN" && <Badge variant="primary">Admin</Badge>}
+          </div>
           <p className="truncate text-xs text-muted-foreground">{user.email}</p>
         </div>
         <DropdownMenuSeparator />
