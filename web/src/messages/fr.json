@@ -1,7 +1,8 @@
 {
   "common": {
-    "appName": "Cité Market",
-    "tagline": "La boutique premium de la Cité des Nations",
+    "appName": "WISECOM Global Trading and Supplies",
+    "appNameShort": "WISECOM",
+    "tagline": "Votre partenaire de confiance pour l'électronique, l'équipement de la maison et des solutions de mobilité de qualité.",
     "loading": "Chargement…",
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -14,13 +15,19 @@
     "back": "Retour",
     "confirm": "Confirmer",
     "close": "Fermer",
-    "location": "Cité des Nations, Yaoundé",
+    "location": "Douala · Yaoundé, Cameroun",
     "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
     "comingSoon": "Bientôt disponible"
   },
   "nav": {
     "home": "Accueil",
-    "shop": "Boutique",
+    "shop": "Produits",
+    "about": "À propos",
+    "services": "Services",
+    "importExport": "Import & Export",
+    "vehicles": "Motos & véhicules",
+    "contact": "Contact",
+    "company": "Entreprise",
     "categories": "Catégories",
     "cart": "Panier",
     "account": "Mon compte",
@@ -47,7 +54,8 @@
     "trustQualityDesc": "Chaque article d'occasion est contrôlé avant la vente",
     "newsletterTitle": "Ne manquez aucune offre",
     "newsletterSubtitle": "Inscrivez-vous pour recevoir nos nouveautés et promotions.",
-    "newsletterCta": "S'inscrire"
+    "newsletterCta": "S'inscrire",
+    "newsletterMsg": "Merci ! Vous êtes inscrit(e)."
   },
   "product": {
     "addToCart": "Ajouter au panier",
@@ -116,7 +124,7 @@
     "loginTitle": "Connexion",
     "loginSubtitle": "Ravis de vous revoir",
     "registerTitle": "Créer un compte",
-    "registerSubtitle": "Rejoignez Cité Market en quelques secondes",
+    "registerSubtitle": "Rejoignez WISECOM en quelques secondes",
     "email": "Adresse e-mail",
     "password": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
@@ -127,7 +135,21 @@
     "submitRegister": "Créer mon compte",
     "noAccount": "Pas encore de compte ?",
     "hasAccount": "Vous avez déjà un compte ?",
-    "requiredForCheckout": "Créez un compte ou connectez-vous pour finaliser votre achat."
+    "requiredForCheckout": "Créez un compte ou connectez-vous pour finaliser votre achat.",
+    "forgotPassword": "Mot de passe oublié ?",
+    "forgotPasswordTitle": "Mot de passe oublié",
+    "forgotPasswordSubtitle": "Indiquez votre email, nous vous enverrons un lien de réinitialisation.",
+    "sendResetLink": "Envoyer le lien",
+    "backToLogin": "Retour à la connexion",
+    "resetLinkSentTitle": "Email envoyé",
+    "resetLinkSentDesc": "Si un compte existe avec cet email, un lien de réinitialisation vient d'être envoyé.",
+    "resetPasswordTitle": "Nouveau mot de passe",
+    "resetPasswordSubtitle": "Choisissez un nouveau mot de passe pour votre compte.",
+    "newPassword": "Nouveau mot de passe",
+    "submitReset": "Réinitialiser le mot de passe",
+    "resetSuccess": "Mot de passe mis à jour, vous pouvez vous connecter.",
+    "resetInvalidToken": "Ce lien est invalide ou a expiré.",
+    "passwordsMustMatch": "Les mots de passe doivent être identiques."
   },
   "account": {
     "title": "Mon compte",
@@ -157,6 +179,11 @@
   "admin": {
     "dashboard": "Tableau de bord",
     "products": "Produits",
+    "categories": "Catégories",
+    "addCategory": "Ajouter une catégorie",
+    "categoryName": "Nom (français)",
+    "categoryNameEn": "Nom (anglais)",
+    "categorySlug": "Slug (URL)",
     "orders": "Commandes",
     "users": "Utilisateurs",
     "addProduct": "Ajouter un produit",
@@ -185,8 +212,9 @@
     "onlySuperadmin": "Seul le super-administrateur peut gérer les rôles."
   },
   "footer": {
-    "about": "Cité Market est une boutique de la Cité des Nations à Yaoundé, spécialisée dans la vente d'ordinateurs, téléphones, ustensiles de cuisine et accessoires, neufs et d'occasion.",
+    "about": "WISECOM Global Trading and Supplies est votre partenaire de confiance pour l'électronique, l'équipement de la maison et des solutions de mobilité, neufs et d'occasion, entre Douala et Yaoundé.",
     "shop": "Boutique",
+    "company": "Entreprise",
     "help": "Aide",
     "contact": "Contact",
     "followUs": "Suivez-nous",
@@ -196,5 +224,93 @@
     "light": "Clair",
     "dark": "Sombre",
     "system": "Système"
+  },
+  "shop": {
+    "neuf": "Articles neufs",
+    "occasion": "Articles d'occasion"
+  },
+  "about": {
+    "title": "À propos de WISECOM",
+    "heroBadge": "Notre histoire",
+    "intro": "WISECOM Global Trading and Supplies est votre partenaire de confiance pour des produits électroniques, articles pour la maison et solutions de mobilité de qualité. Fondée par Atanga Randi, WISECOM est spécialisée dans la vente d'ordinateurs portables, téléphones, accessoires, pièces informatiques et appareils électroménagers, neufs et d'occasion en bon état, ainsi que des motos et véhicules sélectionnés. Avec notre siège social à Douala et une agence à Yaoundé, nous nous engageons à offrir des produits fiables, des prix justes et un excellent service client.",
+    "missionTitle": "Notre mission",
+    "missionText": "Améliorer le quotidien en proposant des produits de qualité et des solutions commerciales fiables.",
+    "visionTitle": "Notre vision",
+    "visionText": "Devenir l'une des principales entreprises commerciales d'Afrique, reconnue pour sa qualité, son innovation et la satisfaction de sa clientèle.",
+    "ceoTitle": "Rencontrez le CEO",
+    "ceoName": "Atanga Randi",
+    "ceoRole": "Fondateur, WISECOM Global Trading and Supplies",
+    "ceoQuote": "En tant que fondateur de WISECOM, mon objectif est de bâtir une entreprise de confiance qui propose des produits de qualité à des prix justes, tout en créant une valeur durable pour nos clients et partenaires commerciaux. Chaque produit que nous proposons reflète notre engagement envers l'excellence et la fiabilité."
+  },
+  "services": {
+    "title": "Nos services",
+    "subtitle": "Vente, réparation et entretien professionnel, partout au Cameroun",
+    "intro": "Chez WISECOM Global Trading and Supplies, nous nous engageons à fournir des produits électroniques de haute qualité et des services techniques professionnels aux particuliers, entreprises, écoles et organisations à travers le Cameroun.",
+    "salesTitle": "Vente d'équipements",
+    "salesText": "Ordinateurs portables, ordinateurs de bureau, téléphones, tablettes et accessoires, neufs authentiques et d'occasion de qualité.",
+    "repairTitle": "Réparation et support technique",
+    "repairText": "Nos techniciens expérimentés réparent et entretiennent les ordinateurs de toutes les grandes marques. Réparation de téléphones, installation de logiciels, mises à jour système et support technique.",
+    "maintenanceTitle": "Entretien préventif",
+    "maintenanceText": "Nettoyage professionnel, optimisation des performances, suppression des virus et entretien préventif.",
+    "remoteTitle": "La distance n'est pas un obstacle",
+    "remoteText": "Vous pouvez nous rendre visite ou demander une intervention à domicile ou au bureau. Vous pouvez aussi nous envoyer votre appareil pour réparation : nous vous le retournons une fois le service effectué.",
+    "warrantyNote": "Tous les produits et réparations éligibles bénéficient d'une garantie, car la satisfaction client est notre priorité absolue.",
+    "warrantyCta": "Voir notre politique de garantie",
+    "visionText": "Notre vision est de devenir l'entreprise de vente et de service électronique la plus fiable et la plus respectée du Cameroun, où qualité et innovation se rencontrent, et où la distance n'est jamais un obstacle."
+  },
+  "warranty": {
+    "title": "Garantie et retours",
+    "subtitle": "Votre satisfaction est notre engagement",
+    "intro": "Nous testons chaque appareil avant sa remise. Tous les produits et réparations éligibles sont accompagnés d'une facture officielle et d'un reçu de garantie précisant les conditions et la durée de la garantie.",
+    "coverageTitle": "Ce que couvre la garantie",
+    "coverageText": "Notre garantie couvre les défauts de fabrication et les pièces remplacées par WISECOM.",
+    "durationsTitle": "Durée de couverture standard",
+    "durationLaptops": "Jusqu'à 60 jours pour les ordinateurs portables",
+    "durationPhones": "La durée indiquée sur votre reçu pour les téléphones",
+    "durationAccessories": "Jusqu'à 30 jours pour les accessoires",
+    "exclusionsTitle": "Ce qui n'est pas couvert",
+    "exclusionsText": "Les dommages causés par des accidents, des liquides, des surtensions, une mauvaise utilisation ou des réparations effectuées par un tiers ne sont pas couverts. Après la période de garantie, toute intervention supplémentaire peut être effectuée comme un nouveau service.",
+    "returnTitle": "Envoi depuis tout le Cameroun",
+    "returnText": "Les clients de tout le Cameroun peuvent facilement nous envoyer leurs appareils pour réparation, et nous les retournons en toute sécurité une fois le service effectué.",
+    "closing": "Nous construisons des relations, pas seulement des ventes, grâce à des produits de qualité, un service professionnel et une garantie claire."
+  },
+  "importExport": {
+    "title": "Import et Export",
+    "subtitle": "Sourcing mondial fiable, expédition sécurisée, livraison locale rapide",
+    "intro": "Chez WISECOM Global Trading and Supplies, la logistique est au cœur de notre activité. Nous assurons l'ensemble du processus d'approvisionnement, d'expédition internationale et de livraison locale, garantissant que chaque commande arrive à nos clients en toute sécurité et efficacité.",
+    "sourcingTitle": "Sourcing international",
+    "sourcingText": "Nous nous approvisionnons en produits de haute qualité auprès de fournisseurs de confiance à Dubaï, en Chine et aux États-Unis, donnant à nos clients accès à des produits neufs authentiques et d'occasion en bon état.",
+    "airFreightTitle": "Fret aérien — environ 10 jours",
+    "airFreightText": "Pour les livraisons rapides, notre service de fret aérien prend généralement une dizaine de jours vers le Cameroun, selon les horaires de vol et les formalités douanières.",
+    "seaFreightTitle": "Fret maritime — environ 2 mois",
+    "seaFreightText": "Pour les envois plus volumineux ou plus économiques, notre option de fret maritime prend environ deux mois selon les plannings.",
+    "deliveryTitle": "Livraison locale",
+    "deliveryText": "Une fois votre expédition arrivée au Cameroun, notre équipe de livraison assure une distribution rapide à votre domicile, bureau ou entreprise.",
+    "closing": "Chez WISECOM, nous pensons que la logistique va au-delà du transport : il s'agit de fiabilité, de confiance et de satisfaction client."
+  },
+  "vehicles": {
+    "title": "Motos et véhicules",
+    "subtitle": "Mobilité de qualité, neuve et d'occasion",
+    "intro": "En plus de notre offre électronique, WISECOM propose des motos et véhicules sélectionnés, neufs et d'occasion en bon état, avec le même engagement de qualité, de prix justes et de service client qui définit notre entreprise.",
+    "cta": "Nous contacter pour la disponibilité"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Une question ? Notre équipe vous répond à Douala comme à Yaoundé.",
+    "headOfficeLabel": "Siège social — Douala",
+    "headOfficeAddress": "Bonaberi Quatre Étages, Douala - Cameroun",
+    "branchOfficeLabel": "Agence — Yaoundé",
+    "branchOfficeAddress": "Cité des Nations, Yaoundé - Cameroun",
+    "phoneLabel": "Téléphone",
+    "emailLabel": "Email",
+    "emailImportExportLabel": "Email — Import & Export",
+    "formTitle": "Envoyez-nous un message",
+    "formName": "Nom complet",
+    "formEmail": "Adresse e-mail",
+    "formMessage": "Message",
+    "formSubmit": "Envoyer",
+    "formSending": "Envoi en cours…",
+    "formSuccess": "Merci ! Votre message a bien été envoyé, nous vous répondrons rapidement.",
+    "formError": "Une erreur est survenue. Veuillez réessayer."
   }
 }
