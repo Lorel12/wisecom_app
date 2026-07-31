@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Cité Market — Boutique Cité des Nations",
-    short_name: "Cité Market",
-    description: "Ordinateurs, téléphones, ustensiles de cuisine et accessoires, neufs et d'occasion, à Yaoundé.",
+    name: "WISECOM Global Trading and Supplies",
+    short_name: "WISECOM",
+    description: "Électronique, équipement de la maison, motos et véhicules, import-export et services techniques, entre Douala et Yaoundé.",
     start_url: "/fr",
     display: "standalone",
     background_color: "#ffffff",
