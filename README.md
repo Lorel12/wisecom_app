@@ -38,13 +38,33 @@ npm run dev                 # démarre l'API sur http://localhost:4000
 
 Identifiants du super-admin créés par le seed : voir `SUPERADMIN_EMAIL` / `SUPERADMIN_PASSWORD` dans `.env`.
 
+Gardez le serveur API lancé dans un terminal pendant que vous utilisez le site : l'inscription,
+la connexion et les formulaires en dépendent.
+
+### Envoi des messages de contact
+
+Les messages du formulaire sont envoyés à `CONTACT_EMAIL` (par défaut `lorelngoumi@gmail.com`).
+Pour activer l'envoi automatique, configurez `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`,
+`SMTP_PASSWORD` et `MAIL_FROM` dans `server/.env` avec les paramètres de votre fournisseur
+SMTP, puis redémarrez l'API. `MAIL_FROM` doit être une adresse autorisée par ce fournisseur.
+Sans configuration SMTP, le site n'indique pas que le message a été envoyé et propose
+un lien pour l'envoyer depuis l'application e-mail du visiteur.
+
+Pour Gmail, activez la validation en deux étapes sur le compte expéditeur, puis créez un
+mot de passe d'application dans les paramètres de sécurité Google. Renseignez ensuite
+`SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_USER` (adresse Gmail expéditrice),
+`SMTP_PASSWORD` (mot de passe d'application, et non le mot de passe habituel du compte)
+et `MAIL_FROM` avec cette même adresse. Gardez ce mot de passe uniquement dans `server/.env`
+ou dans les variables secrètes de l'hébergeur, jamais dans le code ni dans Git. `CONTACT_EMAIL`
+reste l'adresse qui reçoit les messages.
+
 ### 2. Frontend (`web/`)
 
 ```bash
 cd web
 cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL doit pointer vers l'API (http://localhost:4000)
 npm install
-npm run dev                          # démarre le site sur http://localhost:3001
+npm run dev                          # démarre le site sur http://localhost:3000
 ```
 
 ## Paiement mobile (Orange Money / MTN MoMo)
