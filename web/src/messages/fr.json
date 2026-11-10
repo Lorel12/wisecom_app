@@ -311,6 +311,8 @@
     "formSubmit": "Envoyer",
     "formSending": "Envoi en cours…",
     "formSuccess": "Merci ! Votre message a bien été envoyé, nous vous répondrons rapidement.",
-    "formError": "Une erreur est survenue. Veuillez réessayer."
+    "formError": "Une erreur est survenue. Veuillez réessayer.",
+    "formSmtpUnavailable": "L'envoi automatique n'est pas configuré sur le serveur.",
+    "formEmailFallback": "Vous pouvez aussi envoyer votre message directement à"
   }
 }

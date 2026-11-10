@@ -39,8 +39,8 @@
     "wishlist": "My wishlist"
   },
   "home": {
-    "heroTitle": "The best of new and used, delivered in Yaoundé",
-    "heroSubtitle": "Computers, phones, kitchenware and accessories — carefully selected, from Cité des Nations.",
+    "heroTitle": "The best of new and used, delivered in Yaounde",
+    "heroSubtitle": "Computers, phones, kitchenware and accessories — carefully selected, from City of Nations.",
     "heroCta": "Explore the shop",
     "heroSecondaryCta": "Browse categories",
     "categoriesTitle": "Our categories",
@@ -232,7 +232,7 @@
   "about": {
     "title": "About WISECOM",
     "heroBadge": "Our story",
-    "intro": "WISECOM Global Trading and Supplies is your trusted partner for quality electronics, home essentials, and mobility solutions. Founded by Atanga Randi, WISECOM specializes in both new and fairly used laptops, phones, accessories, computer parts, home appliances, and even motorcycles and selected vehicles. With our head office in Douala and a branch office in Yaoundé, we are dedicated to providing reliable products, fair prices, and excellent customer service.",
+    "intro": "WISECOM Global Trading and Supplies is your trusted partner for quality electronics, home essentials, and mobility solutions. Founded by Atanga Randi, WISECOM specializes in both new and fairly used laptops, phones, accessories, computer parts, home appliances, and even motorcycles and selected vehicles. With our head office in Douala and a branch office in Yaounde, we are dedicated to providing reliable products, fair prices, and excellent customer service.",
     "missionTitle": "Our mission",
     "missionText": "To enhance everyday life by offering quality products and dependable trading solutions.",
     "visionTitle": "Our vision",
@@ -296,11 +296,11 @@
   },
   "contact": {
     "title": "Contact",
-    "subtitle": "Have a question? Our team is here for you in Douala and Yaoundé.",
+    "subtitle": "Have a question? Our team is here for you in Douala and Yaounde.",
     "headOfficeLabel": "Head office — Douala",
     "headOfficeAddress": "Bonaberi, Quatre Étages, Douala, Cameroon",
-    "branchOfficeLabel": "Branch — Yaoundé",
-    "branchOfficeAddress": "Cité des Nations, Yaoundé, Cameroon",
+    "branchOfficeLabel": "Branch — Yaounde",
+    "branchOfficeAddress": "City of Nations, Yaounde, Cameroon",
     "phoneLabel": "Phone",
     "emailLabel": "Email",
     "emailImportExportLabel": "Email — Import & Export",
@@ -311,6 +311,8 @@
     "formSubmit": "Send",
     "formSending": "Sending…",
     "formSuccess": "Thank you! Your message has been sent, we'll get back to you shortly.",
-    "formError": "Something went wrong. Please try again."
+    "formError": "Something went wrong. Please try again.",
+    "formSmtpUnavailable": "Automatic email delivery is not configured on the server.",
+    "formEmailFallback": "You can also send your message directly to"
   }
 }
