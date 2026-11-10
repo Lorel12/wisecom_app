@@ -21,21 +21,21 @@ function escapeHtml(value: string) {
 }
 
 function getTransporter() {
-  if (!env.smtp.host) return null;
+  if (!env.smtp.host || !env.smtp.user || !env.smtp.password) return null;
   if (!transporter) {
     transporter = nodemailer.createTransport({
       host: env.smtp.host,
       port: env.smtp.port,
       secure: env.smtp.port === 465,
-      auth: env.smtp.user ? { user: env.smtp.user, pass: env.smtp.password } : undefined,
+      auth: { user: env.smtp.user, pass: env.smtp.password },
     });
   }
   return transporter;
 }
 
 /**
- * Tant que SMTP_HOST n'est pas configuré (server/.env), l'email est simplement
- * affiché dans les logs du serveur — pratique pour développer sans boîte mail réelle.
+ * Tant que la configuration SMTP complète n'est pas renseignée, l'email est simulé
+ * dans les logs du serveur — pratique pour développer sans boîte mail réelle.
  */
 export async function sendPasswordResetEmail(to: string, resetUrl: string) {
   const client = getTransporter();
@@ -59,14 +59,12 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string) {
   });
 }
 
-export async function sendContactMessage(input: { name: string; email: string; message: string }) {
+export async function sendContactMessage(input: { name: string; email: string; message: string }): Promise<boolean> {
   const client = getTransporter();
   const { name, email, message } = input;
 
   if (!client) {
-    console.log(`\n[email:simulation] Message de contact de ${name} <${email}>`);
-    console.log(`[email:simulation] ${message}\n`);
-    return;
+    return false;
   }
 
   await client.sendMail({
@@ -81,4 +79,5 @@ export async function sendContactMessage(input: { name: string; email: string; m
       <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
     `,
   });
+  return true;
 }
