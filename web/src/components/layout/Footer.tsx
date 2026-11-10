@@ -26,14 +26,14 @@ export function Footer() {
           <p className="text-sm leading-relaxed text-muted-foreground">{t("about")}</p>
           <div className="flex gap-3">
             <a
-              href="#"
+              href="https://www.facebook.com/share/1HJqS7qFqu/?mibextid=wwXIfr"
               aria-label="Facebook"
               className="flex size-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
             >
               <FacebookIcon className="size-4" />
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/wisecomhome"
               aria-label="Instagram"
               className="flex size-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
             >
@@ -82,24 +82,22 @@ export function Footer() {
           <p className="flex items-start gap-2 text-sm text-muted-foreground">
             <MapPin className="mt-0.5 size-4 shrink-0" />
             <span>
-              {tct("headOfficeAddress")}
-            </span>
-          </p>
-          <p className="flex items-start gap-2 text-sm text-muted-foreground">
-            <MapPin className="mt-0.5 size-4 shrink-0" />
-            <span>
                {tct("branchOfficeAddress")}
             </span>
           </p>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <Phone className="size-4 shrink-0" /> 
-            <a href="#">+237 655 471 356</a>
+            <a href="https://wa.me/237655471356">+237 655 471 356</a>
           </p>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Phone className="size-4 shrink-0" /> <a href="#">+237 675 513 713</a>
+            <Phone className="size-4 shrink-0" />
+            <a href="https://wa.me/237675513713">+237 675 513 713</a>
           </p>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Mail className="size-4 shrink-0" /> lorelngoumi@gmail.com
+            <Mail className="size-4 shrink-0" />
+            <a href="mailto:lorelngoumi@gmail.com" className="hover:text-primary">
+              lorelngoumi@gmail.com
+            </a>
           </p>
         </div>
       </Container>

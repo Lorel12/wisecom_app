@@ -107,7 +107,7 @@ function CheckoutContent() {
       });
 
       if (redirectUrl) {
-        window.location.href = redirectUrl;
+        window.location.assign(redirectUrl);
         return;
       }
 

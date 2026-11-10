@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight, PackageCheck, ShieldCheck, Smartphone } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -56,6 +57,12 @@ export default async function HomePage() {
           </div>
           <div className="relative mx-auto aspect-square w-full max-w-md rounded-3xl bg-gradient-to-br from-primary-500 to-primary-800 shadow-elevated">
             <div className="absolute inset-6 rounded-2xl border border-white/15 bg-black/5 backdrop-blur-sm" />
+            <Image
+              src="/images/imageMontre.png" alt="Hero"
+              fill sizes="(max-width: 768px) 100vw, 448px"
+              className="rounded-2xl object-cover"
+              priority
+            />
           </div>
         </Container>
       </section>

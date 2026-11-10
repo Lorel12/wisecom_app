@@ -10,13 +10,13 @@ import { useCartStore } from "@/store/cart";
 import { buttonVariants } from "@/components/ui/Button";
 import { cn, formatPrice, resolveImageUrl } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useHydrated } from "@/lib/use-hydrated";
 
 export function CartDrawer() {
   const t = useTranslations("cart");
   const locale = useLocale();
   const { isOpen, close, lines, removeItem, setQuantity, subtotal } = useCartStore();
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+  const mounted = useHydrated();
 
   React.useEffect(() => {
     if (!isOpen) return;

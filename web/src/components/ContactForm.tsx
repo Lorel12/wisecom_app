@@ -23,6 +23,7 @@ export function ContactForm() {
   const t = useTranslations("contact");
   const [status, setStatus] = React.useState<"idle" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [mailtoLink, setMailtoLink] = React.useState<string | null>(null);
 
   const {
     register,
@@ -34,13 +35,21 @@ export function ContactForm() {
   async function onSubmit(values: FormValues) {
     setStatus("idle");
     setErrorMessage(null);
+    setMailtoLink(null);
     try {
       await api.post("/contact", values);
       setStatus("success");
       reset();
     } catch (err) {
       setStatus("error");
-      setErrorMessage(err instanceof ApiError ? err.message : t("formError"));
+      setErrorMessage(
+        err instanceof ApiError && err.status === 503
+          ? t("formSmtpUnavailable")
+          : t("formError"),
+      );
+      const subject = encodeURIComponent("Message de contact — WISECOM");
+      const body = encodeURIComponent(`Nom : ${values.name}\nE-mail : ${values.email}\n\n${values.message}`);
+      setMailtoLink(`mailto:lorelngoumi@gmail.com?subject=${subject}&body=${body}`);
     }
   }
 
@@ -50,14 +59,26 @@ export function ContactForm() {
         <Input id="name" autoComplete="name" {...register("name")} error={!!errors.name} />
       </Field>
       <Field label={t("formEmail")} htmlFor="email" error={errors.email?.message}>
-        <Input id="email" type="email" autoComplete="email" {...register("email")} error={!!errors.email} />
+        <Input id="email" type="email" autoComplete="email" {...register("email")} error={!!errors.email} required/>
       </Field>
       <Field label={t("formMessage")} htmlFor="message" error={errors.message?.message}>
-        <Textarea id="message" rows={5} {...register("message")} error={!!errors.message} />
+        <Textarea id="message" rows={5} {...register("message")} error={!!errors.message} required/>
       </Field>
 
-      {status === "success" && <p className="text-sm text-primary">{t("formSuccess")}</p>}
-      {status === "error" && <p className="text-sm text-destructive">{errorMessage}</p>}
+      {status === "success" && <p role="status" className="text-sm text-primary">{t("formSuccess")}</p>}
+      {status === "error" && (
+        <div role="alert" className="text-sm text-destructive">
+          <p>{errorMessage}</p>
+          {mailtoLink && (
+            <p className="mt-1">
+              {t("formEmailFallback")}{" "}
+              <a className="font-medium underline underline-offset-2" href={mailtoLink}>
+                lorelngoumi@gmail.com
+              </a>
+            </p>
+          )}
+        </div>
+      )}
 
       <Button type="submit" size="lg" loading={isSubmitting} className="mt-2 cursor-pointer">
         <Send className="size-4" /> {isSubmitting ? t("formSending") : t("formSubmit")}
