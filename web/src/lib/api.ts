@@ -22,11 +22,23 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (res.status === 204) return undefined as T;
 
-  const isJson = res.headers.get("content-type")?.includes("application/json");
-  const data = isJson ? await res.json() : undefined;
+  const contentType = res.headers.get("content-type") ?? "";
+  const isJson = contentType.includes("application/json");
+  let data: unknown;
+  if (isJson) {
+    try {
+      data = await res.json();
+    } catch {
+      data = undefined;
+    }
+  }
 
   if (!res.ok) {
-    throw new ApiError(data?.error ?? "Erreur inconnue.", res.status);
+    const errorMessage =
+      typeof data === "object" && data !== null && "error" in data && typeof data.error === "string"
+        ? data.error
+        : `Le serveur a répondu avec l'erreur HTTP ${res.status} pour /api${path} (${contentType || "type de réponse inconnu"}). Vérifiez l'URL et l'état du service API sur Render.`;
+    throw new ApiError(errorMessage, res.status);
   }
   return data as T;
 }
