@@ -1,4 +1,5 @@
 import { env } from "../env.js";
+import { prisma } from "../prisma.js";
 import type { InitiatePaymentInput, InitiatePaymentResult, PaymentProviderClient } from "./types.js";
 
 /**
@@ -18,12 +19,13 @@ import type { InitiatePaymentInput, InitiatePaymentResult, PaymentProviderClient
 type TokenCache = { accessToken: string; expiresAt: number };
 let tokenCache: TokenCache | null = null;
 
-// pay_token retourné à l'étape 2, nécessaire pour vérifier le statut à l'étape 4.
-const payTokenByRef = new Map<string, { payToken: string; orderId: string; amount: number }>();
+export function isOrangeMoneyConfigured() {
+  return Boolean(env.orangeMoney.clientId && env.orangeMoney.clientSecret && env.orangeMoney.merchantKey);
+}
 
 class OrangeMoneyClient implements PaymentProviderClient {
   private get isConfigured() {
-    return Boolean(env.orangeMoney.clientId && env.orangeMoney.clientSecret && env.orangeMoney.merchantKey);
+    return isOrangeMoneyConfigured();
   }
 
   async initiate(input: InitiatePaymentInput): Promise<InitiatePaymentResult> {
@@ -55,8 +57,6 @@ class OrangeMoneyClient implements PaymentProviderClient {
     }
 
     const data = (await res.json()) as { payment_url: string; pay_token: string; notif_token: string };
-    payTokenByRef.set(input.orderId, { payToken: data.pay_token, orderId: input.orderId, amount: input.amount });
-
     return { transactionRef: input.orderId, redirectUrl: data.payment_url, raw: data };
   }
 
@@ -65,8 +65,15 @@ class OrangeMoneyClient implements PaymentProviderClient {
       return { status: "SUCCESS" as const, raw: { simulated: true, transactionRef } };
     }
 
-    const cached = payTokenByRef.get(transactionRef);
-    if (!cached) {
+    const payment = await prisma.payment.findUnique({
+      where: { transactionRef },
+      select: { orderId: true, amount: true, providerRaw: true },
+    });
+    const payToken =
+      payment?.providerRaw && typeof payment.providerRaw === "object" && !Array.isArray(payment.providerRaw)
+        ? payment.providerRaw.pay_token
+        : undefined;
+    if (!payment || typeof payToken !== "string") {
       return { status: "PENDING" as const, raw: { error: "pay_token inconnu pour cette référence" } };
     }
 
@@ -74,7 +81,7 @@ class OrangeMoneyClient implements PaymentProviderClient {
     const res = await fetch(`${env.orangeMoney.apiBase}/orange-money-webpay/cm/v1/transactionstatus`, {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ order_id: cached.orderId, amount: cached.amount, pay_token: cached.payToken }),
+      body: JSON.stringify({ order_id: payment.orderId, amount: payment.amount, pay_token: payToken }),
     });
 
     if (!res.ok) {

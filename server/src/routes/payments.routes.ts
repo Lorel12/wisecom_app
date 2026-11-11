@@ -2,14 +2,22 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { authenticate } from "../middleware/auth.js";
-import { orangeMoneyClient } from "../lib/payments/orangeMoney.js";
-import { momoClient } from "../lib/payments/momo.js";
+import { isOrangeMoneyConfigured, orangeMoneyClient } from "../lib/payments/orangeMoney.js";
+import { isMomoConfigured, momoClient } from "../lib/payments/momo.js";
 import type { PaymentProviderClient } from "../lib/payments/types.js";
 
 export const paymentsRouter = Router();
 
 function clientFor(provider: "ORANGE_MONEY" | "MTN_MOMO"): PaymentProviderClient {
   return provider === "ORANGE_MONEY" ? orangeMoneyClient : momoClient;
+}
+
+function isProviderConfigured(provider: "ORANGE_MONEY" | "MTN_MOMO") {
+  return provider === "ORANGE_MONEY" ? isOrangeMoneyConfigured() : isMomoConfigured();
+}
+
+function providerName(provider: "ORANGE_MONEY" | "MTN_MOMO") {
+  return provider === "ORANGE_MONEY" ? "Orange Money" : "MTN MoMo";
 }
 
 const initiateSchema = z.object({
@@ -27,6 +35,9 @@ paymentsRouter.post("/initiate", authenticate, async (req, res) => {
   if (!order) return res.status(404).json({ error: "Commande introuvable." });
   if (order.userId !== req.user!.sub) return res.status(403).json({ error: "Accès refusé." });
   if (order.status !== "PENDING") return res.status(409).json({ error: "Cette commande a déjà été traitée." });
+  if (process.env.NODE_ENV === "production" && !isProviderConfigured(provider)) {
+    return res.status(503).json({ error: `Le paiement ${providerName(provider)} n'est pas configuré.` });
+  }
 
   const client = clientFor(provider);
   const result = await client.initiate({ orderId, amount: order.total, phoneNumber });
@@ -50,15 +61,23 @@ paymentsRouter.post("/initiate", authenticate, async (req, res) => {
     },
   });
 
-  res.status(201).json({ payment, redirectUrl: result.redirectUrl });
+  res.status(201).json({ redirectUrl: result.redirectUrl });
 });
 
 paymentsRouter.get("/:orderId/status", authenticate, async (req, res) => {
   const payment = await prisma.payment.findUnique({ where: { orderId: req.params.orderId } });
   if (!payment) return res.status(404).json({ error: "Paiement introuvable." });
+  const order = await prisma.order.findUnique({ where: { id: payment.orderId }, select: { userId: true } });
+  if (!order || order.userId !== req.user!.sub) return res.status(404).json({ error: "Paiement introuvable." });
 
   if (payment.status === "PENDING" && payment.transactionRef) {
-    const client = clientFor(payment.provider as "ORANGE_MONEY" | "MTN_MOMO");
+    if (payment.provider !== "ORANGE_MONEY" && payment.provider !== "MTN_MOMO") {
+      return res.status(500).json({ error: "Fournisseur de paiement inconnu." });
+    }
+    if (process.env.NODE_ENV === "production" && !isProviderConfigured(payment.provider)) {
+      return res.status(503).json({ error: `Le paiement ${providerName(payment.provider)} n'est pas configuré.` });
+    }
+    const client = clientFor(payment.provider);
     const result = await client.verify(payment.transactionRef);
     if (result.status !== "PENDING") {
       await prisma.$transaction([
@@ -72,7 +91,7 @@ paymentsRouter.get("/:orderId/status", authenticate, async (req, res) => {
     }
   }
 
-  res.json({ payment });
+  res.json({ payment: { status: payment.status } });
 });
 
 /**
@@ -80,16 +99,28 @@ paymentsRouter.get("/:orderId/status", authenticate, async (req, res) => {
  * À sécuriser en production (vérification de signature / IP allowlist selon la doc du fournisseur).
  */
 paymentsRouter.post("/webhook/:provider", async (req, res) => {
+  if (req.params.provider !== "orange-money" && req.params.provider !== "mtn-momo") {
+    return res.status(400).json({ error: "Fournisseur de paiement inconnu." });
+  }
   const provider = req.params.provider === "orange-money" ? "ORANGE_MONEY" : "MTN_MOMO";
   const transactionRef = (req.body?.transactionRef ?? req.query.ref) as string | undefined;
   if (!transactionRef) return res.status(400).json({ error: "Référence de transaction manquante." });
 
   const payment = await prisma.payment.findUnique({ where: { transactionRef } });
   if (!payment) return res.status(404).json({ error: "Paiement introuvable." });
+  if (payment.provider !== provider) return res.status(400).json({ error: "Fournisseur de paiement incorrect." });
+  if (process.env.NODE_ENV === "production" && !isProviderConfigured(provider)) {
+    return res.status(503).json({ error: `Le paiement ${providerName(provider)} n'est pas configuré.` });
+  }
 
   // En mode simulation (pas d'identifiants marchand configurés), le body du webhook
   // peut porter un indicateur explicite "success" pour piloter le scénario testé.
-  const simulatedOverride = typeof req.body?.success === "boolean" ? (req.body.success as boolean) : undefined;
+  const simulatedOverride =
+    process.env.NODE_ENV !== "production" &&
+    !isProviderConfigured(provider) &&
+    typeof req.body?.success === "boolean"
+      ? (req.body.success as boolean)
+      : undefined;
   const result =
     simulatedOverride !== undefined
       ? { status: (simulatedOverride ? "SUCCESS" : "FAILED") as "SUCCESS" | "FAILED", raw: req.body }

@@ -100,12 +100,33 @@ e-mail direct.
 
 ## Paiement mobile (Orange Money / MTN MoMo)
 
-Tant que les identifiants marchands (`ORANGE_MONEY_*`, `MOMO_*` dans `server/.env`) ne sont pas renseignés,
-les paiements fonctionnent en **mode simulation** (voir `server/src/lib/payments/`) afin de pouvoir tester
-tout le tunnel d'achat de bout en bout. Les intégrations réelles sont documentées en commentaire dans :
+Le paiement simulé est réservé au développement local. En production, une méthode sans identifiants
+marchands configurés renvoie une erreur et ne peut pas marquer une commande comme payée.
 
-- `server/src/lib/payments/orangeMoney.ts`
-- `server/src/lib/payments/momo.ts`
+Pour activer les paiements réels :
+
+1. Déployez d'abord le service API `wisecom-api` depuis le Blueprint Render du dépôt complet, avec
+   PostgreSQL opérationnel et `CLIENT_ORIGIN` réglé sur l'URL publique du site.
+2. Ouvrez un compte marchand et demandez l'accès aux API de paiement pour le Cameroun auprès des
+   fournisseurs concernés. Un compte développeur seul ne garantit pas l'activation d'un compte marchand
+   ni l'autorisation d'encaisser des transactions réelles.
+3. Pour Orange Money Web Payment, configurez `ORANGE_MONEY_CLIENT_ID`,
+   `ORANGE_MONEY_CLIENT_SECRET` et `ORANGE_MONEY_MERCHANT_KEY`. L'URL de base par défaut est
+   `https://api.orange.com`; utilisez celle communiquée pour votre compte/environnement.
+4. Pour MTN MoMo Collection, configurez `MOMO_SUBSCRIPTION_KEY`, `MOMO_API_USER` et `MOMO_API_KEY`.
+   Commencez avec `MOMO_TARGET_ENVIRONMENT=sandbox` et l'URL de sandbox par défaut
+   `https://sandbox.momodeveloper.mtn.com`. Ne passez à l'environnement de production qu'avec les
+   identifiants et l'URL de production fournis après activation par MTN.
+5. Saisissez ces valeurs dans **Render → service API → Environment**, jamais dans le dépôt Git,
+   le service web ou une variable `NEXT_PUBLIC_*`, puis redéployez l'API.
+6. Testez une commande complète avec les outils/numéros de test du fournisseur. Vérifiez que le
+   fournisseur confirme réellement le paiement et que la commande ne passe à `PAID` qu'après
+   cette vérification. N'effectuez pas de transaction réelle avant d'avoir validé le montant, la devise
+   XAF, les URLs de retour/notification et la procédure de remboursement avec le fournisseur.
+
+Les valeurs sandbox ne permettent pas d'encaisser de vrais paiements. Les notifications et les
+confirmations doivent être testées avec la documentation et les identifiants fournis au compte
+marchand avant d'ouvrir le paiement aux clients.
 
 ## Personnalisation visuelle
 

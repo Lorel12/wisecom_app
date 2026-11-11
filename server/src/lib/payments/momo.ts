@@ -21,9 +21,13 @@ import type { InitiatePaymentInput, InitiatePaymentResult, PaymentProviderClient
 type TokenCache = { accessToken: string; expiresAt: number };
 let tokenCache: TokenCache | null = null;
 
+export function isMomoConfigured() {
+  return Boolean(env.momo.subscriptionKey && env.momo.apiUser && env.momo.apiKey);
+}
+
 class MomoClient implements PaymentProviderClient {
   private get isConfigured() {
-    return Boolean(env.momo.subscriptionKey && env.momo.apiUser && env.momo.apiKey);
+    return isMomoConfigured();
   }
 
   async initiate(input: InitiatePaymentInput): Promise<InitiatePaymentResult> {
