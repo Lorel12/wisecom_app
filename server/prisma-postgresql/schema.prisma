@@ -1,0 +1,160 @@
+// PostgreSQL schema for production deployments. Local development uses SQLite
+// through prisma/schema.prisma.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String         @id @default(cuid())
+  email               String         @unique
+  phone               String?        @unique
+  passwordHash        String
+  firstName           String
+  lastName            String
+  role                String         @default("CLIENT")
+  avatarUrl           String?
+  isActive            Boolean        @default(true)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  resetTokenHash      String?
+  resetTokenExpiresAt DateTime?
+  addresses           Address[]
+  orders              Order[]
+  reviews             Review[]
+  wishlist            WishlistItem[]
+  promotedBy          String?
+
+  @@index([role])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  nameEn      String?
+  slug        String    @unique
+  icon        String?
+  description String?
+  createdAt   DateTime  @default(now())
+  products    Product[]
+}
+
+model Product {
+  id             String         @id @default(cuid())
+  name           String
+  nameEn         String?
+  slug           String         @unique
+  description    String
+  descriptionEn  String?
+  price          Int
+  compareAtPrice Int?
+  quantity       Int            @default(0)
+  condition      String         @default("NEUF")
+  brand          String?
+  images         Json           @default("[]")
+  isActive       Boolean        @default(true)
+  isFeatured     Boolean        @default(false)
+  categoryId     String
+  category       Category       @relation(fields: [categoryId], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  orderItems     OrderItem[]
+  reviews        Review[]
+  wishlistedBy   WishlistItem[]
+
+  @@index([categoryId])
+  @@index([isActive, isFeatured])
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String   @default("Domicile")
+  fullName  String
+  phone     String
+  city      String   @default("Yaoundé")
+  district  String
+  landmark  String?
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  addressId   String?
+  address     Address?    @relation(fields: [addressId], references: [id])
+  status      String      @default("PENDING")
+  subtotal    Int
+  shippingFee Int         @default(0)
+  total       Int
+  note        String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+  payment     Payment?
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  name      String
+  unitPrice Int
+  quantity  Int
+
+  @@index([orderId])
+}
+
+model Payment {
+  id             String   @id @default(cuid())
+  orderId        String   @unique
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider       String
+  status         String   @default("PENDING")
+  phoneNumber    String
+  amount         Int
+  transactionRef String?  @unique
+  providerRaw    Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  @@unique([productId, userId])
+  @@index([productId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}

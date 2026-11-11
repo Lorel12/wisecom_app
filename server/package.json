@@ -8,7 +8,9 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
+    "prisma:generate:production": "prisma generate --schema prisma-postgresql/schema.prisma",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:production": "prisma migrate deploy --schema prisma-postgresql/schema.prisma",
     "prisma:studio": "prisma studio",
     "seed": "tsx prisma/seed.ts",
     "lint": "tsc --noEmit"

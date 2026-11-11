@@ -9,7 +9,7 @@ import-export, services techniques, et motos & véhicules. Siège à Douala, age
 ```
 App/
   web/     Frontend Next.js (App Router, TypeScript, Tailwind CSS v4)
-  server/  API backend Express + Prisma + PostgreSQL
+  server/  API backend Express + Prisma (SQLite en local, PostgreSQL sur Render)
   site/    Scaffold Vite par défaut, non utilisé — peut être supprimé
 ```
 
@@ -66,6 +66,28 @@ cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL doit pointer vers l'API
 npm install
 npm run dev                          # démarre le site sur http://localhost:3000
 ```
+
+## Déploiement sur Render
+
+Le dépôt complet contient un [Blueprint Render](./render.yaml) pour l'API et PostgreSQL.
+Importez le dépôt `wisecom_app` comme Blueprint ; il définit le dossier racine de l'API,
+la commande de build, les migrations PostgreSQL, le contrôle `/health` et le disque des images.
+Configurez ensuite `CLIENT_ORIGIN` avec l'URL publique du site, par exemple
+`https://wisecom-web.onrender.com`.
+
+Le dépôt séparé `wisecom_web` contient son propre [Blueprint](./web/render.yaml).
+Déployez-le en service Web Node.js (pas en site statique), puis définissez
+`NEXT_PUBLIC_API_URL` sur l'URL publique de l'API, sans suffixe `/api`, par exemple
+`https://wisecom-api.onrender.com`. Cette variable est intégrée pendant le build du site ;
+redéployez après l'avoir modifiée. `CLIENT_ORIGIN` doit contenir l'URL publique du site web ;
+`NEXT_PUBLIC_API_URL` doit contenir celle de l'API.
+
+La base Render est neuve et distincte de `server/prisma/dev.db` : les données et comptes SQLite
+locaux ne sont pas copiés automatiquement. Après le premier déploiement, configurez
+`SUPERADMIN_EMAIL` et un mot de passe fort `SUPERADMIN_PASSWORD` dans l'environnement du service
+API, puis exécutez une fois `npm run seed` depuis le Shell Render de ce service pour créer le
+compte administrateur, les catégories et les produits d'exemple. Le disque persistant du service
+API conserve les images téléversées.
 
 ## Paiement mobile (Orange Money / MTN MoMo)
 

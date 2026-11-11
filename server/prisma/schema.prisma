@@ -1,12 +1,8 @@
 // Schema Prisma — WISECOM Global Trading and Supplies (Douala / Yaoundé)
 //
-// Base de dev : SQLite (fichier local, zéro configuration).
-// Pour la production, repasser `datasource.provider` à "postgresql" et
-// remettre les blocs `enum` (Role, ProductCondition, OrderStatus,
-// PaymentProvider, PaymentStatus) — SQLite ne supporte ni les enums natifs
-// ni les listes scalaires (String[]), d'où leur remplacement par
-// String / Json ci-dessous. Les valeurs autorisées restent validées côté
-// application (zod) dans les routes.
+// Base de développement : SQLite (fichier local, zéro configuration).
+// La production utilise le schéma et les migrations dédiés dans
+// prisma-postgresql/ ; les valeurs métier restent validées côté application.
 
 generator client {
   provider = "prisma-client-js"
