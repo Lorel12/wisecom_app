@@ -36,4 +36,10 @@ export const env = {
     password: process.env.SMTP_PASSWORD ?? "",
     from: process.env.MAIL_FROM ?? "WISECOM Global Trading and Supplies <no-reply@wisecom.cm>",
   },
+  resendApiKey: process.env.RESEND_API_KEY ?? "",
+  supabase: {
+    url: process.env.SUPABASE_URL ?? "",
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+    storageBucket: process.env.SUPABASE_STORAGE_BUCKET ?? "product-images",
+  },
 };

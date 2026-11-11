@@ -14,6 +14,7 @@ import { wishlistRouter } from "./routes/wishlist.routes.js";
 import { addressesRouter } from "./routes/addresses.routes.js";
 import { uploadsRouter, uploadsDir } from "./routes/uploads.routes.js";
 import { contactRouter } from "./routes/contact.routes.js";
+import { prisma } from "./lib/prisma.js";
 
 fs.mkdirSync(uploadsDir, { recursive: true });
 
@@ -24,7 +25,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static(uploadsDir));
 
-app.get("/health", (_req, res) => res.json({ status: "ok" }));
+app.get("/health", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return res.json({ status: "ok" });
+  } catch {
+    return res.status(503).json({ status: "unavailable" });
+  }
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/categories", categoriesRouter);

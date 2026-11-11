@@ -6,7 +6,7 @@ import { prisma } from "../lib/prisma.js";
 import { signToken, type JwtPayload } from "../lib/jwt.js";
 import { env } from "../lib/env.js";
 import { authenticate } from "../middleware/auth.js";
-import { sendPasswordResetEmail } from "../lib/email.js";
+import { isEmailConfigured, sendPasswordResetEmail } from "../lib/email.js";
 
 export const authRouter = Router();
 
@@ -135,6 +135,10 @@ authRouter.post("/forgot-password", async (req, res) => {
   const { email, locale } = parsed.data;
 
   const genericResponse = { message: "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé." };
+  const emailConfigured = isEmailConfigured();
+  if (!emailConfigured && process.env.NODE_ENV === "production") {
+    return res.status(503).json({ error: "L'envoi des e-mails n'est pas configuré." });
+  }
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) return res.json(genericResponse);
@@ -146,12 +150,11 @@ authRouter.post("/forgot-password", async (req, res) => {
   await prisma.user.update({ where: { id: user.id }, data: { resetTokenHash, resetTokenExpiresAt } });
 
   const resetUrl = `${env.clientOrigin}/${locale}/reinitialiser-mot-de-passe?token=${rawToken}`;
-  await sendPasswordResetEmail(user.email, resetUrl);
-
-  // En mode simulation (pas de SMTP configuré), on renvoie le lien directement pour pouvoir tester
-  // sans boîte mail réelle. À retirer si SMTP_HOST est configuré en production.
-  const isSimulated = !env.smtp.host;
-  res.json(isSimulated && process.env.NODE_ENV !== "production" ? { ...genericResponse, resetUrl } : genericResponse);
+  const sent = await sendPasswordResetEmail(user.email, resetUrl);
+  if (!sent && process.env.NODE_ENV === "production") {
+    return res.status(503).json({ error: "L'envoi des e-mails n'est pas configuré." });
+  }
+  return res.json(!sent ? { ...genericResponse, resetUrl } : genericResponse);
 });
 
 const resetPasswordSchema = z.object({

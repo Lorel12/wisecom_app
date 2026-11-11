@@ -5,8 +5,12 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === "production" && !process.env.SUPERADMIN_PASSWORD) {
+    throw new Error("SUPERADMIN_PASSWORD doit être défini en production.");
+  }
+
   const email = process.env.SUPERADMIN_EMAIL ?? "admin@wisecom.cm";
-  const password = process.env.SUPERADMIN_PASSWORD ?? "ChangeMoiRapidement!123";
+  const password = process.env.SUPERADMIN_PASSWORD || "ChangeMoiRapidement!123";
 
   const superadmin = await prisma.user.upsert({
     where: { email },

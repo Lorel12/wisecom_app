@@ -33,21 +33,49 @@ function getTransporter() {
   return transporter;
 }
 
-/**
- * Tant que la configuration SMTP complète n'est pas renseignée, l'email est simulé
- * dans les logs du serveur — pratique pour développer sans boîte mail réelle.
- */
-export async function sendPasswordResetEmail(to: string, resetUrl: string) {
-  const client = getTransporter();
+export function isEmailConfigured() {
+  return Boolean(env.resendApiKey || getTransporter());
+}
 
-  if (!client) {
-    console.log(`\n[email:simulation] Réinitialisation de mot de passe pour ${to}`);
-    console.log(`[email:simulation] Lien : ${resetUrl}\n`);
-    return;
+async function sendEmail(input: {
+  to: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
+}) {
+  if (env.resendApiKey) {
+    const { replyTo, ...email } = input;
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: env.smtp.from,
+        ...email,
+        ...(replyTo ? { reply_to: replyTo } : {}),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Le fournisseur d'e-mail a refusé le message (${response.status}).`);
+    }
+
+    return true;
   }
 
-  await client.sendMail({
-    from: env.smtp.from,
+  const client = getTransporter();
+  if (!client) return false;
+  await client.sendMail({ from: env.smtp.from, ...input });
+  return true;
+}
+
+/**
+ * Les e-mails passent par l'API Resend en production et peuvent utiliser SMTP en local.
+ */
+export async function sendPasswordResetEmail(to: string, resetUrl: string) {
+  return sendEmail({
     to,
     subject: "Réinitialisation de votre mot de passe — WISECOM",
     html: `
@@ -60,15 +88,9 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string) {
 }
 
 export async function sendContactMessage(input: { name: string; email: string; message: string }): Promise<boolean> {
-  const client = getTransporter();
   const { name, email, message } = input;
 
-  if (!client) {
-    return false;
-  }
-
-  await client.sendMail({
-    from: env.smtp.from,
+  return sendEmail({
     to: env.contactEmail,
     replyTo: email,
     subject: `Nouveau message de contact — ${name}`,
@@ -79,5 +101,4 @@ export async function sendContactMessage(input: { name: string; email: string; m
       <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
     `,
   });
-  return true;
 }

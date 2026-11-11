@@ -3,43 +3,35 @@ services:
     name: wisecom-api
     runtime: node
     region: frankfurt
-    plan: starter
+    plan: free
     rootDir: server
-    buildCommand: npm ci && npx prisma generate --schema prisma-postgresql/schema.prisma && npm run build
-    preDeployCommand: npx prisma migrate deploy --schema prisma-postgresql/schema.prisma
-    startCommand: npm start
+    buildCommand: npm ci --include=dev && npx prisma generate --schema prisma-postgresql/schema.prisma && npm run build
+    startCommand: npm run start:production
     healthCheckPath: /health
-    disk:
-      name: wisecom-uploads
-      mountPath: /opt/render/project/src/server/uploads
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        fromDatabase:
-          name: wisecom-db
-          property: connectionString
+        sync: false
+      - key: DIRECT_URL
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_ORIGIN
         sync: false
       - key: CONTACT_EMAIL
         value: lorelngoumi@gmail.com
-      - key: SMTP_HOST
+      - key: SUPERADMIN_EMAIL
         sync: false
-      - key: SMTP_PORT
-        value: "465"
-      - key: SMTP_USER
+      - key: SUPERADMIN_PASSWORD
         sync: false
-      - key: SMTP_PASSWORD
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: product-images
+      - key: RESEND_API_KEY
         sync: false
       - key: MAIL_FROM
         sync: false
-
-databases:
-  - name: wisecom-db
-    databaseName: wisecom
-    user: wisecom
-    region: frankfurt
-    plan: basic-256mb

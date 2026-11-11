@@ -9,8 +9,7 @@ import-export, services techniques, et motos & véhicules. Siège à Douala, age
 ```
 App/
   web/     Frontend Next.js (App Router, TypeScript, Tailwind CSS v4)
-  server/  API backend Express + Prisma (SQLite en local, PostgreSQL sur Render)
-  site/    Scaffold Vite par défaut, non utilisé — peut être supprimé
+  server/  API backend Express + Prisma (SQLite en local, PostgreSQL en production)
 ```
 
 ## Fonctionnalités
@@ -69,11 +68,12 @@ npm run dev                          # démarre le site sur http://localhost:300
 
 ## Déploiement sur Render
 
-Le dépôt complet contient un [Blueprint Render](./render.yaml) pour l'API et PostgreSQL.
-Importez le dépôt `wisecom_app` comme Blueprint ; il définit le dossier racine de l'API,
-la commande de build, les migrations PostgreSQL, le contrôle `/health` et le disque des images.
-Configurez ensuite `CLIENT_ORIGIN` avec l'URL publique du site, par exemple
-`https://wisecom-web.onrender.com`.
+Le dépôt complet contient un [Blueprint Render](./render.yaml) pour une API Node gratuite.
+Importez le dépôt `wisecom_app` comme Blueprint. Le service utilise un projet PostgreSQL Supabase
+gratuit et exécute ses migrations ainsi que le seed au démarrage. Utilisez l'URL de pooler de
+session Supabase pour `DATABASE_URL` et `DIRECT_URL`, avec le mot de passe de base de données
+fourni par Supabase. Sur Render Free, l'API s'endort après une période d'inactivité et son
+système de fichiers est éphémère.
 
 Le dépôt séparé `wisecom_web` contient son propre [Blueprint](./web/render.yaml).
 Déployez-le en service Web Node.js (pas en site statique), puis définissez
@@ -82,12 +82,21 @@ Déployez-le en service Web Node.js (pas en site statique), puis définissez
 redéployez après l'avoir modifiée. `CLIENT_ORIGIN` doit contenir l'URL publique du site web ;
 `NEXT_PUBLIC_API_URL` doit contenir celle de l'API.
 
-La base Render est neuve et distincte de `server/prisma/dev.db` : les données et comptes SQLite
-locaux ne sont pas copiés automatiquement. Après le premier déploiement, configurez
-`SUPERADMIN_EMAIL` et un mot de passe fort `SUPERADMIN_PASSWORD` dans l'environnement du service
-API, puis exécutez une fois `npm run seed` depuis le Shell Render de ce service pour créer le
-compte administrateur, les catégories et les produits d'exemple. Le disque persistant du service
-API conserve les images téléversées.
+Créez un projet Supabase gratuit, copiez son URL et sa clé `service_role`, et créez un bucket
+Storage public nommé `product-images`. Renseignez ensuite `DATABASE_URL` et `DIRECT_URL`
+(tous deux avec l'URL de pooler **session** Supabase), `SUPABASE_URL` et
+`SUPABASE_SERVICE_ROLE_KEY` dans Render. Ne publiez jamais la clé `service_role`. Les migrations
+sont appliquées automatiquement au démarrage ; définissez aussi
+`SUPERADMIN_EMAIL` et un mot de passe fort `SUPERADMIN_PASSWORD` pour créer le compte admin.
+Supabase Free peut mettre en pause les projets inactifs ; les fichiers SQLite locaux ne sont
+pas transférés.
+
+Les services Render Free s'endorment après inactivité : la première visite peut être lente.
+Ils n'ont pas de disque persistant, les images sont donc stockées dans Supabase Storage.
+Pour l'envoi d'e-mails, configurez un compte Resend gratuit et vérifiez un domaine expéditeur,
+puis renseignez `RESEND_API_KEY` et `MAIL_FROM` dans Render. Sans domaine vérifié, l'envoi
+d'e-mails aux clients ne sera pas disponible ; le formulaire Contact propose toujours son lien
+e-mail direct.
 
 ## Paiement mobile (Orange Money / MTN MoMo)
 
