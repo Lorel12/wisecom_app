@@ -75,7 +75,7 @@ authRouter.post("/login", async (req, res) => {
 });
 
 authRouter.post("/logout", (_req, res) => {
-  res.clearCookie(env.cookieName, { path: "/" });
+  res.clearCookie(env.cookieName, cookieOptions);
   res.status(204).send();
 });
 
